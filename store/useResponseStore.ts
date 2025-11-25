@@ -20,7 +20,7 @@ export const useResponseStore = defineStore('response', () => {
       const { data: response, error: responseError } = await supabase
         .from('survey_responses')
         .insert({
-          survey_id: surveyId
+          survey_id: surveyId,
         })
         .select()
         .single()
@@ -32,12 +32,10 @@ export const useResponseStore = defineStore('response', () => {
         response_id: response.id,
         question_id: answer.question_id,
         answer_text: answer.answer_text,
-        option_id: answer.option_id
+        option_id: answer.option_id,
       }))
 
-      const { error: answersError } = await supabase
-        .from('survey_response_answers')
-        .insert(answersData)
+      const { error: answersError } = await supabase.from('survey_response_answers').insert(answersData)
 
       if (answersError) throw answersError
 
@@ -58,7 +56,8 @@ export const useResponseStore = defineStore('response', () => {
     try {
       const { data, error: fetchError } = await supabase
         .from('survey_responses')
-        .select(`
+        .select(
+          `
           *,
           survey_response_answers (
             *,
@@ -66,7 +65,8 @@ export const useResponseStore = defineStore('response', () => {
               option_text
             )
           )
-        `)
+        `,
+        )
         .eq('survey_id', surveyId)
         .order('submitted_at', { ascending: false })
 
@@ -97,10 +97,20 @@ export const useResponseStore = defineStore('response', () => {
 
   const getResponseStats = async (surveyId: string) => {
     try {
+      // First get all question IDs for this survey
+      const { data: questions, error: questionsError } = await supabase.from('survey_questions').select('id').eq('survey_id', surveyId)
+
+      if (questionsError) throw questionsError
+
+      const questionIds = questions?.map(q => q.id) || []
+
+      if (questionIds.length === 0) return {}
+
       // Obtener todas las respuestas con detalles
       const { data, error: fetchError } = await supabase
         .from('survey_response_answers')
-        .select(`
+        .select(
+          `
           *,
           survey_questions (
             question_text,
@@ -109,8 +119,9 @@ export const useResponseStore = defineStore('response', () => {
           survey_options (
             option_text
           )
-        `)
-        .eq('survey_questions.survey_id', surveyId)
+        `,
+        )
+        .in('question_id', questionIds)
 
       if (fetchError) throw fetchError
 
@@ -123,7 +134,7 @@ export const useResponseStore = defineStore('response', () => {
           stats[questionId] = {
             question: answer.survey_questions?.question_text,
             type: answer.survey_questions?.type,
-            answers: []
+            answers: [],
           }
         }
 
@@ -152,6 +163,6 @@ export const useResponseStore = defineStore('response', () => {
     submitResponse,
     fetchResponses,
     getResponseCount,
-    getResponseStats
+    getResponseStats,
   }
 })

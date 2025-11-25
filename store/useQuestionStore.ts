@@ -24,6 +24,20 @@ export const useQuestionStore = defineStore('question', () => {
 
       if (fetchError) throw fetchError
       questions.value = data || []
+
+      // Cargar opciones para todas las preguntas
+      const questionIds = questions.value.map(q => q.id)
+      if (questionIds.length > 0) {
+        const { data: optionsData, error: optionsError } = await supabase
+          .from('survey_options')
+          .select('*')
+          .in('question_id', questionIds)
+
+        if (optionsError) throw optionsError
+        options.value = optionsData || []
+      } else {
+        options.value = []
+      }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Error al cargar preguntas'
       console.error('Error fetching questions:', err)
@@ -67,11 +81,13 @@ export const useQuestionStore = defineStore('question', () => {
           option_text: optionText
         }))
 
-        const { error: optionsError } = await supabase
+        const { data: insertedOptions, error: optionsError } = await supabase
           .from('survey_options')
           .insert(optionsData)
+          .select()
 
         if (optionsError) throw optionsError
+        options.value.push(...(insertedOptions || []))
       }
 
       questions.value.push(data)
@@ -89,14 +105,49 @@ export const useQuestionStore = defineStore('question', () => {
     loading.value = true
     error.value = null
     try {
+      // Extraer options del questionData para manejarlas por separado
+      const { options: questionOptions, ...questionFields } = questionData
+
       const { data, error: updateError } = await supabase
         .from('survey_questions')
-        .update(questionData)
+        .update(questionFields)
         .eq('id', id)
         .select()
         .single()
 
       if (updateError) throw updateError
+
+      // Si es pregunta múltiple y hay opciones, actualizar las opciones
+      if (questionData.type === 'multiple' && questionOptions) {
+        // Eliminar opciones existentes
+        const { error: deleteError } = await supabase
+          .from('survey_options')
+          .delete()
+          .eq('question_id', id)
+
+        if (deleteError) throw deleteError
+
+        // Insertar nuevas opciones
+        if (questionOptions.length > 0) {
+          const optionsData = questionOptions.map(optionText => ({
+            question_id: id,
+            option_text: optionText
+          }))
+
+          const { data: insertedOptions, error: optionsError } = await supabase
+            .from('survey_options')
+            .insert(optionsData)
+            .select()
+
+          if (optionsError) throw optionsError
+
+          // Remover opciones antiguas de options.value
+          options.value = options.value.filter(opt => opt.question_id !== id)
+
+          // Agregar nuevas
+          options.value.push(...(insertedOptions || []))
+        }
+      }
 
       const index = questions.value.findIndex(q => q.id === id)
       if (index !== -1) {
