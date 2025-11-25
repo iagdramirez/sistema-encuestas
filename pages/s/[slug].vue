@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-gradient-to-br tw-from-blue-50 tw-to-indigo-100 tw-py-8 tw-px-4">
+  <div class="tw-bg-[#18171d] tw-min-h-screen tw-text-white tw-py-8 tw-px-4">
     <div class="tw-max-w-2xl tw-mx-auto">
       <!-- Loading -->
       <div v-if="loading" class="tw-flex tw-justify-center tw-py-12">
@@ -14,21 +14,21 @@
       <!-- Encuesta no encontrada -->
       <div v-else-if="!survey" class="tw-text-center tw-py-12">
         <v-icon size="64" class="tw-text-gray-400 tw-mb-4">mdi-clipboard-text-off</v-icon>
-        <h2 class="tw-text-2xl tw-font-bold tw-text-gray-700 tw-mb-2">Encuesta no encontrada</h2>
-        <p class="tw-text-gray-500">La encuesta que buscas no existe o ha sido eliminada.</p>
+        <h2 class="tw-text-2xl tw-font-bold tw-text-white tw-mb-2">Encuesta no encontrada</h2>
+        <p class="tw-text-gray-400">La encuesta que buscas no existe o ha sido eliminada.</p>
       </div>
 
       <!-- Formulario de respuesta -->
       <div v-else-if="!submitted">
-        <v-card class="tw-shadow-xl tw-border-0">
-          <v-card-title class="tw-bg-white tw-border-b tw-border-gray-200 tw-rounded-t-lg">
+        <v-card class="tw-bg-[#1e1e24] tw-border tw-border-gray-700 tw-shadow-xl">
+          <v-card-title class="tw-bg-[#25252b] tw-border-b tw-border-gray-600 tw-rounded-t-lg">
             <div class="tw-text-center tw-w-full">
-              <h1 class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-mb-2">{{ survey.title }}</h1>
-              <p v-if="survey.description" class="tw-text-gray-600">{{ survey.description }}</p>
+              <h1 class="tw-text-3xl tw-font-bold tw-text-white tw-mb-2">{{ survey.title }}</h1>
+              <p v-if="survey.description" class="tw-text-gray-300">{{ survey.description }}</p>
             </div>
           </v-card-title>
 
-          <v-card-text class="tw-bg-white tw-p-8">
+          <v-card-text class="tw-bg-[#1e1e24] tw-p-8">
             <v-form ref="responseForm" @submit.prevent="submitResponse">
               <div v-for="(question, index) in questions" :key="question.id" class="tw-mb-8">
                 <div class="tw-flex tw-items-start tw-mb-4">
@@ -36,7 +36,7 @@
                     {{ index + 1 }}
                   </div>
                   <div class="tw-flex-1">
-                    <h3 class="tw-text-lg tw-font-semibold tw-text-gray-800 tw-mb-3">
+                    <h3 class="tw-text-lg tw-font-semibold tw-text-white tw-mb-3">
                       {{ question.question_text }}
                     </h3>
 
@@ -60,7 +60,8 @@
                         :rules="[v => !!v || 'Este campo es requerido']"
                         rows="3"
                         variant="outlined"
-                        class="tw-max-w-md"
+                        class="tw-max-w-md tw-bg-[#25252b] tw-text-white"
+                        color="primary"
                       ></v-textarea>
                     </div>
 
@@ -103,11 +104,11 @@
 
       <!-- Pantalla de gracias -->
       <div v-else class="tw-text-center tw-py-12">
-        <v-card class="tw-shadow-xl tw-border-0 tw-bg-white">
+        <v-card class="tw-bg-[#1e1e24] tw-border tw-border-gray-700 tw-shadow-xl">
           <v-card-text class="tw-p-12">
             <v-icon size="80" class="tw-text-green-500 tw-mb-6">mdi-check-circle</v-icon>
-            <h2 class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-mb-4">¡Gracias por participar!</h2>
-            <p class="tw-text-lg tw-text-gray-600 tw-mb-6">
+            <h2 class="tw-text-3xl tw-font-bold tw-text-white tw-mb-4">¡Gracias por participar!</h2>
+            <p class="tw-text-lg tw-text-gray-300 tw-mb-6">
               Tus respuestas han sido registradas exitosamente.
             </p>
             <v-btn
