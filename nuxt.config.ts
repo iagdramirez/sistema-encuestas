@@ -3,10 +3,16 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 const {
   //********** Configuración de Servicios **********//
   APP_PORT = 6985,
+
+  APP_URL,
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY,
 } = process.env
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
+
+  ssr: false,
 
   devtools: { enabled: true },
 
@@ -18,14 +24,14 @@ export default defineNuxtConfig({
   app: {
     head: {
       titleTemplate: '%s',
-      title: 'Sistema Inventario',
+      title: 'Sistema Encuestas',
       htmlAttrs: {
         lang: 'es',
       },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { hid: 'description', name: 'description', content: 'Sistema Inventario' },
+        { name: 'description', content: 'Sistema Encuestas' },
         { name: 'format-detection', content: 'telephone=no' },
       ],
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
@@ -35,17 +41,15 @@ export default defineNuxtConfig({
   // Variables de Entorno para el servidor y el cliente.
   runtimeConfig: {
     //
-
     public: {
+      appUrl: APP_URL,
+      supabaseUrl: SUPABASE_URL,
+      supabaseAnonKey: SUPABASE_ANON_KEY,
       // Import env here...
     },
   },
 
   css: ['animate.css'],
-
-  plugins: [
-    // Import plugins here...
-  ],
 
   // https://nuxt.com/docs/guide/directory-structure/components
   components: true,
@@ -56,6 +60,9 @@ export default defineNuxtConfig({
 
     // https://nuxt.com/modules/tailwindcss
     '@nuxtjs/tailwindcss',
+
+    // https://supabase.nuxtjs.org/
+    '@nuxtjs/supabase',
 
     // https://vuetifyjs.com/en/getting-started/installation/#using-nuxt-3
     (_options, nuxt) => {
@@ -103,5 +110,12 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['vuetify'],
+  },
+
+  supabase: {
+    url: SUPABASE_URL,
+    key: SUPABASE_ANON_KEY,
+
+    redirect: false
   },
 })

@@ -1,5 +1,5 @@
 {
-  "name": "sistema-inventario",
+  "name": "sistema-encuestas",
   "type": "module",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@nuxtjs/supabase": "^2.0.1",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "animate.css": "^4.1.1",
@@ -21,13 +22,16 @@
     "maska": "^3.2.0",
     "mssql": "^12.1.0",
     "nuxt": "^4.2.1",
+    "qrcode": "^1.5.4",
     "response-time": "^2.3.4",
     "vue": "^3.5.24",
     "vue-chartjs": "^5.3.3",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@types/mssql": "^9.1.8",
+    "@types/qrcode": "^1.5.6",
     "@types/response-time": "^2.3.9",
     "prettier": "^3.6.2",
     "sass": "^1.94.1",
