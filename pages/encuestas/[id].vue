@@ -400,6 +400,8 @@ const saveQuestion = async () => {
     } else {
       await questionStore.createQuestion(route.params.id as string, questionData.value)
     }
+    // Recargar preguntas para asegurar que se refresque la lista
+    await questionStore.fetchQuestions(route.params.id as string)
     closeQuestionDialog()
   } catch (error) {
     console.error('Error saving question:', error)
