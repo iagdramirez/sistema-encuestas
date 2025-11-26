@@ -1,4 +1,4 @@
-name: Deploy to Vercel with Vercel CLI
+name: CI / Deploy to Vercel
 
 on:
   push:
@@ -7,33 +7,34 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to Vercel
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install pnpm
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.7'
+
+      - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Nuxt app
+        run: pnpm build
+
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm i -g vercel@latest
 
-      - name: Install dependencies (pnpm)
-        run: pnpm install
-
-      - name: Build Project Artifacts (pnpm build)
-        run: vercel build
-        env:
-          APP_URL: ${{ secrets.APP_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-
-      - name: Deploy to Vercel Production
-        run: vercel deploy --prod --prebuilt
+      - name: Deploy to Vercel
+        run: vercel --prod --token $VERCEL_TOKEN --scope VERCEL_PROJECT_ID --confirm
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}# opcional
