@@ -3,7 +3,7 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - main     # Cambia si usas otra rama
+      - deploy
 
 jobs:
   deploy:
@@ -23,16 +23,28 @@ jobs:
 
       - name: Build Nuxt
         run: pnpm build
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      # Deploy a Vercel
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
+
           vercel pull --yes --environment=production \
-            --token=$VERCEL_TOKEN
-          vercel build --prod --token=$VERCEL_TOKEN
+            --token=$VERCEL_TOKEN \
+            --org $VERCEL_ORG_ID \
+            --project $VERCEL_PROJECT_ID
+
+          vercel build --prod \
+            --token=$VERCEL_TOKEN \
+            --org $VERCEL_ORG_ID \
+            --project $VERCEL_PROJECT_ID
+
           vercel deploy --prebuilt --prod \
-            --token=$VERCEL_TOKEN
+            --token=$VERCEL_TOKEN \
+            --org $VERCEL_ORG_ID \
+            --project $VERCEL_PROJECT_ID
         env:
           APP_URL: ${{ secrets.APP_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
