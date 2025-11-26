@@ -27,6 +27,22 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
+      - name: Debug tokens
+        run: |
+          echo "APP length: ${#APP_URL}"
+          echo "URL length: ${#SUPABASE_URL}"
+          echo "ANON_KEY length: ${#SUPABASE_ANON_KEY}"
+          echo "TOKEN length: ${#VERCEL_TOKEN}"
+          echo "ORG_ID length: ${#VERCEL_ORG_ID}"
+          echo "PROJECT_ID length: ${#VERCEL_PROJECT_ID}"
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
