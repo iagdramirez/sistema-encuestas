@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Deploy to Vercel with Vercel CLI
 
 on:
   push:
@@ -11,27 +11,29 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      - name: Install dependencies
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Install dependencies (pnpm)
         run: pnpm install
 
-      - name: Build Nuxt
-        run: pnpm build
+      - name: Build Project Artifacts (pnpm build)
+        run: vercel build
         env:
           APP_URL: ${{ secrets.APP_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-args: '--prod'
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Deploy to Vercel Production
+        run: vercel deploy --prod --prebuilt
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
