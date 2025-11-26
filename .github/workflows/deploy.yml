@@ -31,7 +31,7 @@ jobs:
         run: pnpm build
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v5.0.0
         with:
           projectBaseDir: .
         env:
