@@ -3,7 +3,7 @@ name: CI / Deploy to Vercel
 on:
   push:
     branches:
-      - deploy
+      - main
 
 jobs:
   sonarcloud:
