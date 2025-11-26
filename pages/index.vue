@@ -1,8 +1,9 @@
 <template>
   <div class="tw-bg-[#18171d] tw-min-h-[94vh] tw-rounded-2xl tw-text-white tw-py-6 tw-px-4 xs:tw-px-16 tw-mx-2 xs:tw-mx-0">
     <v-container fluid class="tw-py-6">
-      <div class="tw-flex tw-justify-between tw-items-center tw-mb-6">
+      <div class="tw-flex tw-flex-wrap tw-justify-between tw-items-center tw-mb-6">
         <h1 class="tw-text-3xl tw-font-bold">Sistema de Encuestas</h1>
+
         <v-btn color="primary" @click="showCreateDialog = true">
           <v-icon left>mdi-plus</v-icon>
           Nueva Encuesta
