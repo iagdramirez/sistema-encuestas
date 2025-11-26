@@ -33,7 +33,7 @@ jobs:
         run: npm i -g vercel@latest
 
       - name: Deploy to Vercel
-        run: vercel --prod --token $VERCEL_TOKEN --scope VERCEL_PROJECT_ID --confirm
+        run: vercel --prod --token $VERCEL_TOKEN --scope $VERCEL_PROJECT_ID --confirm
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
