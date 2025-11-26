@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: CI / Deploy to Vercel
 
 on:
   push:
@@ -6,12 +6,18 @@ on:
       - deploy
 
 jobs:
-  deploy:
+  sonarcloud:
+    name: Run SonarCloud Analysis
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.7'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2
@@ -21,34 +27,46 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Nuxt
+      - name: Build project
         run: pnpm build
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        with:
+          projectBaseDir: .
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: sonarcloud
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.7'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Nuxt app
+        run: pnpm build
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
 
       - name: Deploy to Vercel
-        run: |
-          npm i -g vercel
-
-          vercel pull --yes --environment=production \
-            --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
-
-          vercel build --prod \
-            --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
-
-          vercel deploy --prebuilt --prod \
-            --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
+        run: vercel --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID --confirm
         env:
-          APP_URL: ${{ secrets.APP_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
