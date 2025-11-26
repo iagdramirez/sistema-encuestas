@@ -49,18 +49,18 @@ jobs:
 
           vercel pull --yes --environment=production \
             --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
+            --org=$VERCEL_ORG_ID \
+            --project=$VERCEL_PROJECT_ID
 
           vercel build --prod \
             --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
+            --org=$VERCEL_ORG_ID \
+            --project=$VERCEL_PROJECT_ID
 
           vercel deploy --prebuilt --prod \
             --token=$VERCEL_TOKEN \
-            --org $VERCEL_ORG_ID \
-            --project $VERCEL_PROJECT_ID
+            --org=$VERCEL_ORG_ID \
+            --project=$VERCEL_PROJECT_ID
         env:
           APP_URL: ${{ secrets.APP_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
