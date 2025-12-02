@@ -6,7 +6,7 @@
 
         <v-btn color="primary" @click="showCreateDialog = true">
           <v-icon left>mdi-plus</v-icon>
-          Nueva Encuesta
+          Encuesta Nueva
         </v-btn>
       </div>
 
